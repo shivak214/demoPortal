@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://approvalguard-demo-government-portal.onrender.com/api/:path*"
+    }
+  ]
+}
