@@ -171,7 +171,9 @@
       if (requestedApplicationId) message.textContent = `Existing application ${requestedApplicationId} selected for review.`;
       async function autofillFromVault() {
         try {
-          const response = await fetch(`${approvalGuardUrl}/api/information-vault/snapshot`);
+          const response = await fetch(
+    `${window.APPROVAL_GUARD_URL}/api/information-vault/snapshot`
+);
           const result = await response.json();
           if (!response.ok || !result.data?.records)
             throw new Error(result.message || "No Information Vault data found.");
@@ -179,7 +181,7 @@
           const value = key => String(records[key]?.fieldValue || "").trim();
           const values = {
             businessName: value("business_name"),
-            applicantName: value("owner_name"),
+           applicantName: value("authorized_person") || value("owner_name"),
             pan: value("pan"),
             gstin: value("gstin"),
             phone: value("phone_number"),
@@ -199,12 +201,15 @@
           message.style.color = "#a12c2c";
         }
       }
-      if (vaultShared) {
-        autofillFromVault();
-      } else {
-        message.textContent = "Information Vault data was not shared. Return to ApprovalGuard and allow sharing to autofill this form.";
-        message.style.color = "#8a5a00";
-      }
+     if (vaultShared) {
+  window.addEventListener("load", () => {
+    autofillFromVault();
+  });
+} else {
+  message.textContent =
+    "Information Vault data was not shared. Return to ApprovalGuard and allow sharing to autofill this form.";
+  message.style.color = "#8a5a00";
+}
       document
         .querySelector("#submitButton")
         .addEventListener("click", async () => {
